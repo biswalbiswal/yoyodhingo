@@ -1,0 +1,86 @@
+**********************************************************************
+*        BROWSING STATUS OF TRANSACTION MAP
+**********************************************************************
+         PRINT NOGEN
+P23AS08  DFHMSD TYPE=&SYSPARM,                                         C
+               CTRL=(FREEKB),                                          C
+               LANG=COBOL,                                             C
+               MODE=INOUT,                                             C
+               MAPATTS=COLOR,                                          C
+               STORAGE=AUTO,                                           C
+               TIOAPFX=YES
+TRAN2    DFHMDI COLUMN=0001,                                           C
+               LINE=0001,                                              C
+               SIZE=(24,80)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               COLOR=TURQUOISE,                                        C
+               INITIAL=' BROWSING STATUS OF TRANSACTION ',             C
+               LENGTH=32,                                              C
+               POS=(3,27)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL=' *******************************',             C
+               LENGTH=32,                                              C
+               POS=(4,27)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               COLOR=BLUE,                                             C
+               INITIAL='CUSTOMER-ID    :',                             C
+               LENGTH=16,                                              C
+               POS=(8,12)
+CID2     DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='1234',                                         C
+               LENGTH=4,                                               C
+               POS=(8,30)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               COLOR=BLUE,                                             C
+               INITIAL='CUSTOMER-NAME  :',                             C
+               LENGTH=16,                                              C
+               POS=(10,12)
+CNAME2   DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='              ',                               C
+               LENGTH=15,                                              C
+               POS=(10,30)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               COLOR=BLUE,                                             C
+               INITIAL='ADDRESS        :',                             C
+               LENGTH=16,                                              C
+               POS=(12,12)
+CADD     DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='        ',                                     C
+               LENGTH=8,                                               C
+               POS=(12,30)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               COLOR=BLUE,                                             C
+               INITIAL='DATE OF BIRTH  :',                             C
+               LENGTH=16,                                              C
+               POS=(14,12)
+BDATE    DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='    /  /  ',                                   C
+               LENGTH=10,                                              C
+               POS=(14,30)
+*
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               COLOR=BLUE,                                             C
+               INITIAL='SALARY         :',                             C
+               LENGTH=16,                                              C
+               POS=(16,12)
+CSAL     DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='          ',                                   C
+               LENGTH=10,                                              C
+               POS=(16,30)
+MESSAGE  DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='BROWSE YOUR TRANSACTION DETAILS       ',       C
+               COLOR=RED,                                              C
+               LENGTH=40,                                              C
+               POS=(23,2)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               COLOR=YELLOW,                                           C
+               INITIAL='F2 = PENDING; F4 = APPROVAL; F5 = REJECT; F3 = C
+               BACK',                                                  C
+               LENGTH=51,                                              C
+               POS=(24,1)
+DUMMY    DFHMDF ATTRB=(PROT,DRK,FSET),                                 C
+               INITIAL=' ',                                            C
+               LENGTH=1,                                               C
+               POS=(24,79)
+         DFHMSD TYPE=FINAL
+         END

@@ -1,0 +1,104 @@
+000100*************************************************************     00010003
+000200*                  *PROGRAM FOR ADMIN MENU*                       00020003
+000300*************************************************************     00030003
+000400*************************************************************     00040003
+000500*                  AUTHOR - JYOTI KUMARI ROY                      00050004
+000600*************************************************************     00060003
+000700 IDENTIFICATION DIVISION.                                         00070000
+000800 PROGRAM-ID. P23AP04.                                             00080000
+000900 DATA DIVISION.                                                   00090000
+001000*************************************************************     00100001
+001100*             DECLARING VARIABLES                           *     00110001
+001200*************************************************************     00120001
+001300 WORKING-STORAGE SECTION.                                         00130000
+001400 01  WS-CA.                                                       00140000
+001500     03  WS-ID         PIC X(04).                                 00150000
+001600     03  WS-PASS       PIC X(05).                                 00160000
+001700     03  WS-STAT       PIC X(01).                                 00170000
+001800     03  WS-TYP        PIC X(01).                                 00180000
+001900*************************************************************     00190001
+002000*      COPYING MEMBERS, INCLUDING DCLGEN MEMBERS            *     00200001
+002100*************************************************************     00210001
+002200 COPY CUSTREC.                                                    00220000
+002300 COPY P23AS04.                                                    00230000
+002400 COPY DFHAID.                                                     00240000
+002500*************************************************************     00250001
+002600*              PASSING VALUES TO THE COMMON AREA            *     00260001
+002700*************************************************************     00270001
+002800 LINKAGE SECTION.                                                 00280000
+002900 01  DFHCOMMAREA        PIC X(11).                                00290000
+003000 PROCEDURE DIVISION.                                              00300000
+003100*************************************************************     00310001
+003200*             STARTING THE MAIN PROGRAM                     *     00320001
+003300*************************************************************     00330001
+003400 0000-MAIN-PARA.                                                  00340000
+003500     IF EIBCALEN = ZERO                                           00350000
+003600        EXEC CICS XCTL                                            00360000
+003700           PROGRAM('P23AP01')                                     00370000
+003800        END-EXEC                                                  00380000
+003900     ELSE                                                         00390000
+004000        IF WS-TYP IS NOT EQUAL 'A'                                00400000
+004100           MOVE DFHCOMMAREA TO WS-CA                              00410000
+004200           PERFORM 1000-SEND-AMAP                                 00420000
+004300     ELSE                                                         00430000
+004400        PERFORM 2000-RECE-AMAP                                    00440000
+004500     END-IF                                                       00450000
+004600     PERFORM 9000-RETURN-CICS.                                    00460000
+004700 1000-SEND-AMAP.                                                  00470000
+004800     MOVE LOW-VALUES TO AMAPO                                     00480000
+004900     PERFORM 3000-SEND-MAP.                                       00490000
+005000*SENDING THE LOGIN-MAP.                                           00500000
+005100*PERFORMING OPERATIONS USING AID KEYS                             00510000
+005200 2000-RECE-AMAP.                                                  00520000
+005300     EVALUATE EIBAID                                              00530000
+005400        WHEN DFHPF3                                               00540000
+005500           EXEC CICS XCTL                                         00550000
+005600              PROGRAM('P23AP01')                                  00560000
+005700           END-EXEC                                               00570000
+005800        WHEN DFHENTER                                             00580000
+005900           PERFORM 4000-RECE-MAP                                  00590000
+006000           EVALUATE OPTIONI                                       00600000
+006100              WHEN '1'                                            00610000
+006200                 EXEC CICS XCTL                                   00620000
+006300                    PROGRAM('P23AP07')                            00630001
+006400                    COMMAREA(WS-CA)                               00640000
+006500                 END-EXEC                                         00650000
+006600              WHEN '2'                                            00660000
+006700                 EXEC CICS XCTL                                   00670000
+006800                    PROGRAM('P23AP08')                            00680001
+006900                    COMMAREA(WS-CA)                               00690000
+007000                 END-EXEC                                         00700000
+007100              WHEN '3'                                            00710001
+007200                 MOVE 'GOTO COBOL2 BATCH PROGRAM'   TO MESSAGEO   00720000
+007300              WHEN OTHER                                          00730000
+007400                 MOVE 'PLEASE ENTER A VALID OPTION' TO MESSAGEO   00740000
+007500           END-EVALUATE                                           00750000
+007600        WHEN OTHER                                                00760000
+007700           MOVE 'YOU PRESSED A INVALID KEY'         TO MESSAGEO   00770000
+007800     END-EVALUATE                                                 00780000
+007900     PERFORM 3000-SEND-MAP                                        00790000
+008000     PERFORM 9000-RETURN-CICS.                                    00800000
+008100                                                                  00810002
+008200 3000-SEND-MAP.                                                   00820000
+008300     EXEC CICS SEND                                               00830000
+008400     MAP('AMAP')                                                  00840000
+008500         MAPSET('P23AS04')                                        00850000
+008600         FROM (AMAPO)                                             00860000
+008700         ERASE                                                    00870000
+008800     END-EXEC.                                                    00880000
+008900                                                                  00890002
+009000*RECEIVING LOGIN-MAP.                                             00900000
+009100 4000-RECE-MAP.                                                   00910000
+009200     EXEC CICS RECEIVE                                            00920000
+009300         MAP('AMAP')                                              00930000
+009400         MAPSET('P23AS04')                                        00940000
+009500         INTO(AMAPI)                                              00950000
+009600     END-EXEC.                                                    00960000
+009700                                                                  00970002
+009800*   GIVING CONTROL TO CICS                                        00980002
+009900 9000-RETURN-CICS.                                                00990000
+010000     EXEC CICS RETURN                                             01000000
+010100        TRANSID('P23D')                                           01010000
+010200        COMMAREA(WS-CA)                                           01020000
+010300     END-EXEC.                                                    01030000
+010400************************END OF THE PROGRAM*******************     01040002

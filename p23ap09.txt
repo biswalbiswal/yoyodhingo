@@ -1,0 +1,124 @@
+000100******************************************************************00010014
+000200*         BATCH PROGRAM TO PRINT TRANSACTION REPORT               00020015
+000300******************************************************************00030014
+000400******************************************************************00040014
+000500*                AUTHOR - GAGAN MITRUKA                           00050014
+000600******************************************************************00060014
+000700 IDENTIFICATION DIVISION.                                         00070000
+000800 PROGRAM-ID. P23AP11.                                             00080010
+000900 ENVIRONMENT DIVISION.                                            00090000
+001000 DATA DIVISION.                                                   00100000
+001100 WORKING-STORAGE SECTION.                                         00110000
+001200* VARIBLE TO ACCEPT USER ID OF THE USER                           00120011
+001300 01  WS-ID           PIC X(04) VALUE SPACES.                      00130000
+001400 01  HEADING-LINE1.                                               00140001
+001500     03  FILLER      PIC X(05) VALUE ALL ' '.                     00150001
+001600     03  FILLER      PIC X(20) VALUE 'WELCOME TO APNA BANK'.      00160001
+001700     03  FILLER      PIC X(05) VALUE ALL ' '.                     00170001
+001800 01  HEADING-LINE2.                                               00180001
+001900     03  FILLER      PIC X(05) VALUE ALL ' '.                     00190001
+002000     03  FILLER      PIC X(11) VALUE 'REPORT FOR '.               00200001
+002100     03  FILLER      PIC X(10) VALUE 'USER ID :-'.                00210001
+002200     03  H-UID       PIC X(04).                                   00220001
+002300 01  HEADING-LINE3.                                               00230001
+002400     03  FILLER      PIC X(08) VALUE 'NAME :- '.                  00240001
+002500     03  H-NAME      PIC X(15).                                   00250001
+002600 01  HEADING-LINE4.                                               00260001
+002700     03  FILLER      PIC X(15) VALUE 'OPEN BALANCE :-'.           00270001
+002800     03  H-BAL       PIC ZZ,ZZ,ZZ,ZZZ.99.                         00280001
+002900 01  HEADING-LINE5.                                               00290001
+003000     03  FILLER      PIC X(05) VALUE 'T-ID'.                      00300001
+003100     03  FILLER      PIC X(19) VALUE 'DATE'.                      00310009
+003200     03  FILLER      PIC X(06) VALUE 'AMOUNT'.                    00320004
+003300 01  ENDING-LINE.                                                 00330001
+003400     03  FILLER      PIC X(15) VALUE 'CLOSE BALANCE:-'.           00340001
+003500     03  E-BAL       PIC ZZ,ZZ,ZZ,ZZZ.99.                         00350001
+003600 01  EMPTY-LINE.                                                  00360001
+003700     03  FILLER      PIC X(30) VALUE ALL '='.                     00370001
+003800 01  DETAIL-LINE.                                                 00380001
+003900     03  D-ID        PIC X(04).                                   00390001
+004000     03  FILLER      PIC X(01) VALUE SPACES.                      00400008
+004100     03  D-DATE      PIC X(10).                                   00410001
+004200     03  D-AMT       PIC ZZ,ZZ,ZZ,ZZZ.99.                         00420001
+004300 01  WS-BAL          PIC 9(09)V99.                                00430001
+004400* INCLUDING ALL THE DB2 TABLES AND SQL CODES                      00440011
+004500     EXEC SQL                                                     00450001
+004600        INCLUDE TRAN                                              00460005
+004700     END-EXEC.                                                    00470000
+004800     EXEC SQL                                                     00480001
+004900        INCLUDE CUSTOMER                                          00490001
+005000     END-EXEC.                                                    00500001
+005100     EXEC SQL                                                     00510002
+005200        INCLUDE LOAN                                              00520002
+005300     END-EXEC.                                                    00530002
+005400     EXEC SQL                                                     00540000
+005500        INCLUDE SQLCA                                             00550000
+005600     END-EXEC.                                                    00560000
+005700     EXEC SQL                                                     00570000
+005800        DECLARE TRA_CUR CURSOR FOR                                00580000
+005900        SELECT * FROM T23_TRAN                                    00590000
+006000        WHERE TCUST_ID = :WS-ID                                   00600007
+006100     END-EXEC.                                                    00610000
+006200 PROCEDURE DIVISION.                                              00620000
+006300* STARTING OF OUR MAIN PROGRAM                                    00630011
+006400 0000-MAIN-PARA.                                                  00640011
+006500* INITIALIZE ALL THE OPEN CURSORS                                 00650011
+006600     PERFORM 1000-INIT-PARA                                       00660011
+006700* READING CURSOR UNTIL END OF TABLE                               00670011
+006800     PERFORM 2000-READ-PARA UNTIL SQLCODE = 100                   00680011
+006900* CLOSING ALL THE CURSORS                                         00690011
+007000     PERFORM 3000-END-PARA                                        00700011
+007100     STOP RUN.                                                    00710011
+007200 1000-INIT-PARA.                                                  00720011
+007300     ACCEPT WS-ID                                                 00730000
+007400* PASSING USER ID                                                 00740011
+007500     MOVE WS-ID TO H-UID                                          00750005
+007600     EXEC SQL                                                     00760001
+007700        SELECT * INTO :USER-RECORD                                00770001
+007800           FROM T23_USER                                          00780001
+007900           WHERE UID = :WS-ID                                     00790001
+008000     END-EXEC                                                     00800001
+008100     MOVE UNAME TO H-NAME                                         00810002
+008200     EXEC SQL                                                     00820001
+008300        SELECT * INTO :LOAN-RECORD                                00830001
+008400           FROM T23_LOAN                                          00840001
+008500           WHERE CUST_ID = :WS-ID                                 00850007
+008600     END-EXEC                                                     00860001
+008700     PERFORM 1500-MOVE-HEADING-PARA                               00870011
+008800     EXEC SQL                                                     00880011
+008900        OPEN TRA_CUR                                              00890011
+009000     END-EXEC.                                                    00900011
+009100* DISPLAYING ALL THE HEADING-LINES                                00910011
+009200 1500-MOVE-HEADING-PARA.                                          00920011
+009300     MOVE BLNC  TO WS-BAL                                         00930002
+009400     MOVE WS-BAL TO H-BAL                                         00940001
+009500     DISPLAY HEADING-LINE1                                        00950001
+009600     DISPLAY HEADING-LINE2                                        00960001
+009700     DISPLAY HEADING-LINE3                                        00970001
+009800     DISPLAY HEADING-LINE4                                        00980001
+009900     DISPLAY EMPTY-LINE                                           00990001
+010000     DISPLAY HEADING-LINE5                                        01000001
+010100     DISPLAY EMPTY-LINE.                                          01010011
+010200* PARA TO READ ALL THE RECORDS OF TRANSACTION TABLE               01020011
+010300 2000-READ-PARA.                                                  01030011
+010400     EXEC SQL                                                     01040000
+010500        FETCH TRA_CUR INTO :TRANSACTION-RECORD                    01050005
+010600     END-EXEC                                                     01060000
+010700     IF SQLCODE = ZERO                                            01070000
+010800         PERFORM 2500-MOVE-PARA                                   01080011
+010900         DISPLAY DETAIL-LINE                                      01090002
+011000     END-IF.                                                      01100000
+011100* COPYING TABLE RECORDS TO PROGRAM VARIABLES                      01110011
+011200 2500-MOVE-PARA.                                                  01120011
+011300     MOVE TRAN-ID     TO D-ID                                     01130003
+011400     MOVE TRAN-DATE   TO D-DATE                                   01140003
+011500     MOVE TAMT        TO D-AMT.                                   01150011
+011600     SUBTRACT TAMT FROM WS-BAL.                                   01160012
+011700 3000-END-PARA.                                                   01170011
+011800     EXEC SQL                                                     01180011
+011900        CLOSE TRA_CUR                                             01190011
+012000     END-EXEC.                                                    01200011
+012100     MOVE WS-BAL TO E-BAL                                         01210011
+012200     DISPLAY EMPTY-LINE                                           01220011
+012300     DISPLAY ENDING-LINE.                                         01230011
+012400********************END OF THE PROGRAM************************    01240013

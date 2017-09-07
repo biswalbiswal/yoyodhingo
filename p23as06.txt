@@ -1,0 +1,76 @@
+**********************************************************************
+*                    ACCOUNT DETAILS INQUIRY MAP
+**********************************************************************
+         PRINT NOGEN
+* MAPSET DETAILS.
+P23AS06  DFHMSD TYPE=&SYSPARM,                                         C
+               CTRL=(FREEKB),                                          C
+               LANG=COBOL,                                             C
+               MAPATTS=(COLOR,HILIGHT),                                C
+               MODE=INOUT,                                             C
+               STORAGE=AUTO,                                           C
+               TIOAPFX=YES
+* MAP DETAILS.
+AINQ     DFHMDI COLUMN=0001,                                           C
+               LINE=0001,                                              C
+               SIZE=(24,80)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL=' *ACCOUNT DETAILS INQUIRY* ',                  C
+               LENGTH=27,                                              C
+               POS=(3,27)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL=' ************************* ',                  C
+               LENGTH=27,                                              C
+               POS=(4,27)
+* USER ID.
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='USER-ID  :',                                   C
+               LENGTH=10,                                              C
+               POS=(7,12)
+UID      DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='2001',                                         C
+               LENGTH=4,                                               C
+               POS=(7,23)
+* USER NAME.
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='USER-NAME:',                                   C
+               LENGTH=10,                                              C
+               POS=(9,12)
+UNAME    DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='MANJEET KAUR   ',                              C
+               LENGTH=15,                                              C
+               POS=(9,23)
+* LOAN AMOUNT.
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='LOAN AMT :',                                   C
+               LENGTH=10,                                              C
+               POS=(11,12)
+LAMT     DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='0100000.00',                                   C
+               LENGTH=10,                                              C
+               POS=(11,23)
+* BALANCE AMOUNT.
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='BALANCE  :',                                   C
+               LENGTH=10,                                              C
+               POS=(13,12)
+BLNC     DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='0005000.00',                                   C
+               LENGTH=12,                                              C
+               POS=(13,23)
+* MESSAGE DISPLAYED.
+MESSAGE  DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='HERE ARE YOUR ACCOUNT DETAILS           ',     C
+               COLOR=RED,                                              C
+               LENGTH=40,                                              C
+               POS=(23,2)
+         DFHMDF ATTRB=(PROT,BRT),                                      C
+               INITIAL='ENTER = PROCESS;                  PF3 = EXIT', C
+               LENGTH=44,                                              C
+               POS=(24,1)
+DUMMY    DFHMDF ATTRB=(PROT,DRK,FSET),                                 C
+               INITIAL=' ',                                            C
+               LENGTH=1,                                               C
+               POS=(24,79)
+         DFHMSD TYPE=FINAL
+         END

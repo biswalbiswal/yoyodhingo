@@ -1,0 +1,164 @@
+*********************************************************************   00001014
+*                    NEW APPLICATION FORM MAP                           00002014
+*********************************************************************   00003014
+         PRINT NOGEN                                                    00010012
+* MAPSET DETAILS.                                                       00020012
+P23AS02  DFHMSD TYPE=&SYSPARM,                                         C00030012
+               CTRL=(FREEKB),                                          C00040012
+               LANG=COBOL,                                             C00050012
+               MODE=INOUT,                                             C00060012
+               MAPATTS=COLOR,                                          C00070012
+               STORAGE=AUTO,                                           C00080012
+               TIOAPFX=YES                                              00090012
+* MAP DETAILS.                                                          00100012
+ADDU     DFHMDI COLUMN=0001,                                           C00110012
+               LINE=0001,                                              C00120012
+               SIZE=(24,80)                                             00130012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00140012
+               INITIAL='***********************************************C00150012
+               *****************************',                         C00160012
+               LENGTH=76,                                              C00170012
+               POS=(2,3)                                                00180012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00190012
+               COLOR=TURQUOISE,                                        C00200012
+               INITIAL='NEW APPLICATION FORM',                         C00210012
+               LENGTH=26,                                              C00220012
+               POS=(3,27)                                               00230012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00240012
+               COLOR=TURQUOISE,                                        C00250012
+               INITIAL='********************',                         C00260012
+               LENGTH=26,                                              C00270012
+               POS=(4,27)                                               00280012
+* USER ID.                                                              00290012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00300012
+               COLOR=BLUE,                                             C00310013
+               INITIAL='YOUR ID    :',                                 C00320012
+               LENGTH=12,                                              C00330012
+               POS=(5,12)                                               00340012
+CID      DFHMDF ATTRB=(UNPROT,BRT,IC),                                 C00350012
+               INITIAL='0000',                                         C00360012
+               LENGTH=4,                                               C00370012
+               POS=(5,25)                                               00380012
+         DFHMDF ATTRB=(ASKIP),                                         C00390012
+               INITIAL=' ',                                            C00400012
+               LENGTH=1,                                               C00410012
+               POS=(5,30)                                               00420012
+* USER NAME.                                                            00430012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00440012
+               COLOR=BLUE,                                             C00441013
+               INITIAL='INPUT NAME :',                                 C00460012
+               LENGTH=12,                                              C00470012
+               POS=(7,12)                                               00480012
+CNAME    DFHMDF ATTRB=(UNPROT,BRT),                                    C00490012
+               INITIAL='               ',                              C00500012
+               LENGTH=15,                                              C00510012
+               POS=(7,25)                                               00520012
+         DFHMDF ATTRB=(ASKIP),                                         C00530012
+               INITIAL=' ',                                            C00540012
+               LENGTH=1,                                               C00550012
+               POS=(7,41)                                               00560012
+* USER PASSWORD.                                                        00570012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00580012
+               COLOR=BLUE,                                             C00581013
+               INITIAL='INPUT PASS :',                                 C00600012
+               LENGTH=12,                                              C00610012
+               POS=(9,12)                                               00620012
+CPASS    DFHMDF ATTRB=(UNPROT,BRT),                                    C00630012
+               INITIAL='     ',                                        C00640012
+               LENGTH=5,                                               C00650012
+               POS=(9,25)                                               00660012
+         DFHMDF ATTRB=(ASKIP),                                         C00670012
+               INITIAL=' ',                                            C00680012
+               LENGTH=1,                                               C00690012
+               POS=(9,31)                                               00700012
+* USER ADDRESS.                                                         00710012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00720012
+               COLOR=BLUE,                                             C00721013
+               INITIAL='INPUT ADD  :',                                 C00740012
+               LENGTH=12,                                              C00750012
+               POS=(11,12)                                              00760012
+CADD     DFHMDF ATTRB=(UNPROT,BRT),                                    C00770012
+               INITIAL='                    ',                         C00780012
+               LENGTH=15,                                              C00790012
+               POS=(11,25)                                              00800012
+         DFHMDF ATTRB=(ASKIP),                                         C00810012
+               INITIAL=' ',                                            C00820012
+               LENGTH=1,                                               C00830012
+               POS=(11,41)                                              00840012
+* USER DATE OF BIRTH.                                                   00850012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00860012
+               COLOR=BLUE,                                             C00870013
+               INITIAL='INPUT DOB  :',                                 C00880012
+               LENGTH=12,                                              C00890012
+               POS=(13,12)                                              00900012
+CDOB     DFHMDF ATTRB=(UNPROT,BRT),                                    C00910012
+               INITIAL='    /  /  ',                                   C00920012
+               LENGTH=10,                                              C00930012
+               POS=(13,25)                                              00940012
+         DFHMDF ATTRB=(ASKIP),                                         C00950012
+               INITIAL=' ',                                            C00960012
+               LENGTH=1,                                               C00970012
+               POS=(13,36)                                              00980012
+         DFHMDF ATTRB=(PROT,BRT),                                      C00990012
+               COLOR=YELLOW,                                           C01000012
+               INITIAL='FORMAT YYYY/MM/DD',                            C01010012
+               LENGTH=18,                                              C01020012
+               POS=(13,38)                                              01030012
+* USER CONTACT NUMBER.                                                  01040012
+         DFHMDF ATTRB=(PROT,BRT),                                      C01050012
+               COLOR=BLUE,                                             C01060013
+               INITIAL='INPUT NUM  :',                                 C01070012
+               LENGTH=12,                                              C01080012
+               POS=(15,12)                                              01090012
+CNUM     DFHMDF ATTRB=(UNPROT,BRT),                                    C01100012
+               INITIAL='          ',                                   C01110012
+               LENGTH=10,                                              C01120012
+               POS=(15,25)                                              01130012
+         DFHMDF ATTRB=(ASKIP),                                         C01140012
+               INITIAL=' ',                                            C01150012
+               LENGTH=1,                                               C01160012
+               POS=(15,36)                                              01170012
+* USER SALARY.                                                          01180012
+         DFHMDF ATTRB=(PROT,BRT),                                      C01190012
+               COLOR=BLUE,                                             C01200013
+               INITIAL='INPUT SAL  :',                                 C01210012
+               LENGTH=12,                                              C01220012
+               POS=(17,12)                                              01230012
+CSALARY  DFHMDF ATTRB=(UNPROT,BRT),                                    C01240012
+               INITIAL='         ',                                    C01250012
+               LENGTH=9,                                               C01260012
+               POS=(17,25)                                              01270012
+         DFHMDF ATTRB=(ASKIP),                                         C01280012
+               INITIAL=' ',                                            C01290012
+               LENGTH=1,                                               C01300012
+               POS=(17,35)                                              01310012
+* LOAN AMOUNT.                                                          01320012
+         DFHMDF ATTRB=(PROT,BRT),                                      C01330012
+               COLOR=BLUE,                                             C01331013
+               INITIAL='INPUT LOAN :',                                 C01340012
+               LENGTH=12,                                              C01350012
+               POS=(19,12)                                              01360012
+CLAMT    DFHMDF ATTRB=(UNPROT,BRT),                                    C01370012
+               INITIAL='         ',                                    C01380012
+               LENGTH=9,                                               C01390012
+               POS=(19,25)                                              01400012
+         DFHMDF ATTRB=(ASKIP),                                         C01410012
+               INITIAL=' ',                                            C01420012
+               LENGTH=1,                                               C01430012
+               POS=(19,35)                                              01440012
+* MESSAGE DISPLAYED.                                                    01450012
+MESSAGE  DFHMDF ATTRB=(PROT,BRT),                                      C01460012
+               INITIAL='ENTER YOUR PERSONAL DETAILS TO CONTINUE',      C01470012
+               COLOR=RED,                                              C01480012
+               LENGTH=50,                                              C01490012
+               POS=(23,2)                                               01500012
+         DFHMDF ATTRB=(PROT,BRT),                                      C01510012
+               INITIAL='ENTER = PROCESS;                  PF3 = EXIT', C01520012
+               LENGTH=44,                                              C01530012
+               POS=(24,1)                                               01540012
+DUMMY    DFHMDF ATTRB=(PROT,DRK,FSET),                                 C01550012
+               INITIAL=' ',                                            C01560012
+               LENGTH=1,                                               C01570012
+               POS=(24,79)                                              01580012
+         DFHMSD TYPE=FINAL                                              01590012
+         END                                                            01600012

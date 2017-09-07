@@ -1,0 +1,159 @@
+000100***************************************************************** 00010002
+000200*               *PROGRAM FOR LOGIN PAGE*                          00020002
+000300***************************************************************** 00030002
+000400***************************************************************** 00040002
+000500*             AUTHOR - RACHEL VARGHESE                            00050004
+000600***************************************************************** 00060002
+000700 IDENTIFICATION DIVISION.                                         00070000
+000800 PROGRAM-ID. P23AP01.                                             00080000
+000900 DATA DIVISION.                                                   00090000
+001000 WORKING-STORAGE SECTION.                                         00100000
+001100 01  WS-CA.                                                       00110000
+001200     03  WS-ID         PIC X(04) VALUE SPACES.                    00120000
+001300     03  WS-PASS       PIC X(05) VALUE SPACES.                    00130000
+001400     03  WS-STAT       PIC X(01) VALUE SPACES.                    00140000
+001500     03  WS-TYP        PIC X(01) VALUE SPACES.                    00150000
+001600 01  LOGIN-C           PIC X(01) VALUE 'N'.                       00160000
+001700     88 LOGIN-SUCCESS            VALUE 'Y'.                       00170000
+001800 01  WS-MESSAGE        PIC X(50) VALUE 'END OF PROGRAM'.          00180000
+001900 01  WS-TEMP           PIC X(04) VALUE SPACES.                    00190000
+002000 01  WS-DATE-TIME      PIC S9(15) COMP-3 VALUE ZERO.              00200000
+002100* INCLUDE CUSTOMER RECORD VARIABLES                               00210000
+002200 COPY CUSTREC.                                                    00220000
+002300* INCLUDE BMS OF THE PROGRAM                                      00230000
+002400 COPY P23AS01.                                                    00240000
+002500* INCLUDE AID KEYS FOR CICS                                       00250000
+002600 COPY DFHAID.                                                     00260000
+002700     EXEC SQL                                                     00270000
+002800        INCLUDE CUSTOMER                                          00280000
+002900     END-EXEC                                                     00290000
+003000     EXEC SQL                                                     00300000
+003100        INCLUDE SQLCA                                             00310000
+003200     END-EXEC.                                                    00320000
+003300 LINKAGE SECTION.                                                 00330000
+003400 01  DFHCOMMAREA        PIC X(11).                                00340000
+003500 PROCEDURE DIVISION.                                              00350000
+003600* CHECK THE FIRST EXECUTION OF THE PROGRAM                        00360000
+003700 0000-MAIN-PARA.                                                  00370000
+003800     IF EIBCALEN = ZERO                                           00380000
+003900        PERFORM 1000-SEND-LOGIN                                   00390000
+004000     ELSE                                                         00400000
+004100        PERFORM 2000-RECE-LOGIN                                   00410000
+004200     END-IF                                                       00420000
+004300     PERFORM 7000-RETURN-CICS.                                    00430000
+004400* SENDING MAP FOR THE FIRST TIME                                  00440000
+004500 1000-SEND-LOGIN.                                                 00450000
+004600* LOW VALUES TO INITIALIZE MAP TO NULL OR INITIAL VALUES          00460000
+004700     MOVE LOW-VALUES TO LOGINO                                    00470000
+004800     PERFORM 3000-SEND-MAP.                                       00480000
+004900*PERFORMING OPERATIONS USING AID KEYS                             00490000
+005000 2000-RECE-LOGIN.                                                 00500000
+005100     EVALUATE EIBAID                                              00510000
+005200        WHEN DFHPF3                                               00520000
+005300           PERFORM 9000-END-CICS                                  00530000
+005400        WHEN DFHENTER                                             00540000
+005500           PERFORM 4000-RECE-MAP                                  00550000
+005600           PERFORM 5000-LOGIN-CHECK                               00560000
+005700           IF LOGIN-SUCCESS                                       00570000
+005800* CHECKS THE ID AND PASSWORD                                      00580000
+005900              PERFORM 6000-MOVE-PARA                              00590000
+006000* THIS IS TO SELECT FOR ADMIN AND USER                            00600000
+006100              IF C-TYPE = 'A'                                     00610000
+006200                 EXEC CICS XCTL                                   00620000
+006300                    PROGRAM('P23AP04')                            00630000
+006400                    COMMAREA(WS-CA)                               00640000
+006500                 END-EXEC                                         00650000
+006600              ELSE                                                00660000
+006700                 EXEC CICS XCTL                                   00670000
+006800                    PROGRAM('P23AP03')                            00680000
+006900                    COMMAREA(WS-CA)                               00690000
+007000                 END-EXEC                                         00700000
+007100              END-IF                                              00710000
+007200           END-IF                                                 00720000
+007300        WHEN DFHPF12                                              00730000
+007400           EXEC CICS XCTL                                         00740000
+007500              PROGRAM('P23AP02')                                  00750000
+007600           END-EXEC                                               00760000
+007700        WHEN OTHER                                                00770000
+007800           MOVE 'YOU PRESSED A INVALID KEY' TO MESSAGEO           00780000
+007900     END-EVALUATE                                                 00790000
+008000     PERFORM 3000-SEND-MAP                                        00800000
+008100     PERFORM 7000-RETURN-CICS.                                    00810000
+008200*SENDING THE LOGIN-MAP.                                           00820000
+008300 3000-SEND-MAP.                                                   00830000
+008400* GETTING DATE AND TIME FROM SYSTEM                               00840000
+008500     PERFORM 3500-DATE-TIME-PARA                                  00850000
+008600     EXEC CICS SEND                                               00860000
+008700     MAP('LOGIN')                                                 00870000
+008800        MAPSET('P23AS01')                                         00880000
+008900        FROM (LOGINO)                                             00890000
+009000        ERASE                                                     00900000
+009100     END-EXEC.                                                    00910000
+009200 3500-DATE-TIME-PARA.                                             00920000
+009300     EXEC CICS ASKTIME                                            00930000
+009400        ABSTIME(WS-DATE-TIME)                                     00940000
+009500     END-EXEC.                                                    00950000
+009600     EXEC CICS FORMATTIME                                         00960000
+009700        ABSTIME(WS-DATE-TIME)                                     00970000
+009800        DDMMYYYY(DATEO)                                           00980000
+009900        DATESEP                                                   00990000
+010000        TIME(TIMEO)                                               01000000
+010100        TIMESEP                                                   01010000
+010200     END-EXEC.                                                    01020000
+010300*RECEIVING LOGIN-MAP.                                             01030000
+010400 4000-RECE-MAP.                                                   01040000
+010500     EXEC CICS RECEIVE                                            01050000
+010600        MAP('LOGIN')                                              01060000
+010700        MAPSET('P23AS01')                                         01070000
+010800        INTO(LOGINI)                                              01080000
+010900     END-EXEC.                                                    01090000
+011000*VALIDATING USER-ID AND PASSWORD.                                 01100000
+011100 5000-LOGIN-CHECK.                                                01110000
+011200     IF USERIDL = ZERO OR PASSWDL = ZERO                          01120000
+011300        MOVE 'PLEASE ENTER VALID ID OR PASSWORD' TO MESSAGEO      01130000
+011400     ELSE                                                         01140000
+011500        MOVE USERIDI TO WS-TEMP                                   01150000
+011600        EXEC SQL                                                  01160000
+011700           SELECT * INTO :USER-RECORD                             01170000
+011800              FROM T23_USER                                       01180000
+011900              WHERE UID = :WS-TEMP                                01190000
+012000        END-EXEC                                                  01200000
+012100        EVALUATE SQLCODE                                          01210000
+012200           WHEN ZERO                                              01220000
+012300              MOVE USER-RECORD TO CUSTOMER-RECORD                 01230000
+012400              IF PASSWDI = C-PASS                                 01240000
+012500                 IF C-STAT = 'P'                                  01250000
+012600                    MOVE 'ACCOUNT NOT ACTIVATED'     TO MESSAGEO  01260000
+012700                 ELSE                                             01270000
+012800                    IF C-STAT = 'R'                               01280000
+012900                    MOVE 'YOUR REQUEST WAS REJECTED' TO MESSAGEO  01290000
+013000                 ELSE                                             01300000
+013100                    MOVE 'Y' TO LOGIN-C                           01310000
+013200                 END-IF                                           01320000
+013300              ELSE                                                01330000
+013400                 MOVE 'YOU INPUT A WRONG PASSWORD'   TO MESSAGEO  01340000
+013500              END-IF                                              01350000
+013600          WHEN 100                                                01360000
+013700              MOVE 'GIVEN USER ID IS NOT VALID'      TO MESSAGEO  01370000
+013800          WHEN OTHER                                              01380000
+013900              MOVE 'ERROR IN READING CUSTOMER FILES' TO MESSAGEO  01390000
+014000        END-EVALUATE.                                             01400000
+014100*ACCEPTING DATE AND TIME FROM SYSTEM                              01410000
+014200 6000-MOVE-PARA.                                                  01420000
+014300     MOVE C-ID   TO WS-ID                                         01430000
+014400     MOVE C-STAT TO WS-STAT                                       01440000
+014500     MOVE C-PASS TO WS-PASS                                       01450000
+014600     MOVE C-TYPE TO WS-TYP.                                       01460000
+014700*RETURNING CONTROL TO CICS                                        01470000
+014800 7000-RETURN-CICS.                                                01480000
+014900     EXEC CICS RETURN                                             01490000
+015000         TRANSID('P23A')                                          01500000
+015100         COMMAREA(WS-CA)                                          01510000
+015200     END-EXEC.                                                    01520000
+015300 9000-END-CICS.                                                   01530000
+015400     EXEC CICS SEND TEXT                                          01540000
+015500        FROM(WS-MESSAGE)                                          01550000
+015600        ERASE                                                     01560000
+015700     END-EXEC.                                                    01570000
+015800     EXEC CICS RETURN                                             01580000
+015900     END-EXEC.                                                    01590000

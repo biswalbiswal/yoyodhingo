@@ -1,0 +1,144 @@
+000100********************************************************          00010002
+000200*          PROGRAM FOR NEW APPLICATION FORM                       00020002
+000300********************************************************          00030002
+000400********************************************************          00040002
+000500*              AUTHOR - RACHEL VARGHESE                           00050004
+000600********************************************************          00060002
+000700 IDENTIFICATION DIVISION.                                         00070000
+000800 PROGRAM-ID. P23AP02.                                             00080000
+000900 DATA DIVISION.                                                   00090000
+001000***********************************************************       00100001
+001100*                 DEFINING ALL THE VARIABLES              *       00110001
+001200***********************************************************       00120001
+001300 WORKING-STORAGE SECTION.                                         00130000
+001400 01 WS-CA                 PIC X(01).                              00140000
+001500 01 WS-BAL                 PIC 9(09)V99.                          00150000
+001600 01 WS-LAMT                PIC X(10).                             00160000
+001700 01 WS-LAMT-O REDEFINES WS-LAMT PIC 9(09)V99.                     00170000
+001800 01 WS-SAL                 PIC X(10).                             00180000
+001900 01 WS-SAL-O REDEFINES WS-SAL PIC 9(07)V99.                       00190000
+002000 01 WS-NUM                 PIC X(10).                             00200000
+002100 01 WS-NUM-O REDEFINES WS-NUM PIC 9(10)V.                         00210000
+002200***********************************************************       00220000
+002300*       INCLUDING DCLGEN MEMBERS AND COPYLIB MEMBERS      *       00230001
+002400***********************************************************       00240001
+002500 COPY CUSTREC.                                                    00250000
+002600 COPY P23AS02.                                                    00260000
+002700 COPY DFHAID.                                                     00270000
+002800      EXEC SQL                                                    00280000
+002900         INCLUDE CUSTOMER                                         00290000
+003000      END-EXEC.                                                   00300000
+003100      EXEC SQL                                                    00310000
+003200         INCLUDE LOAN                                             00320000
+003300      END-EXEC.                                                   00330000
+003400      EXEC SQL                                                    00340000
+003500         INCLUDE SQLCA                                            00350000
+003600      END-EXEC.                                                   00360000
+003700***********************************************************       00370001
+003800*       PASSING VALUES TO THE COMMON-AREA                 *       00380001
+003900***********************************************************       00390001
+004000 LINKAGE SECTION.                                                 00400000
+004100 01  DFHCOMMAREA        PIC X(01).                                00410000
+004200 PROCEDURE DIVISION.                                              00420000
+004300***********************************************************       00430001
+004400*             START OF MAIN PROGRAM                       *       00440001
+004500***********************************************************       00450001
+004600 0000-MAIN-PARA.                                                  00460000
+004700     IF EIBCALEN = ZERO                                           00470000
+004800        PERFORM 1000-SEND-ADD                                     00480000
+004900     ELSE                                                         00490000
+005000        PERFORM 2000-RECE-ADD                                     00500000
+005100     END-IF                                                       00510000
+005200     PERFORM 9000-RETURN-CICS.                                    00520000
+005300 1000-SEND-ADD.                                                   00530000
+005400     MOVE LOW-VALUES TO ADDUO                                     00540000
+005500     PERFORM 3000-SEND-MAP.                                       00550000
+005600***********************************************************       00560001
+005700*        PERFORMING FUNCTIONS USING AID KEYS              *       00570001
+005800***********************************************************       00580001
+005900 2000-RECE-ADD.                                                   00590000
+006000     EVALUATE EIBAID                                              00600000
+006100        WHEN DFHPF3                                               00610000
+006200           EXEC CICS XCTL                                         00620000
+006300              PROGRAM('P23AP01')                                  00630000
+006400           END-EXEC                                               00640000
+006500        WHEN DFHENTER                                             00650000
+006600            PERFORM 4000-RECE-MAP                                 00660000
+006700            PERFORM 5000-MOVE-PARA                                00670000
+006800        WHEN OTHER                                                00680000
+006900            MOVE 'YOU PRESSED A INVALID KEY' TO MESSAGEO          00690000
+007000     END-EVALUATE                                                 00700000
+007100     PERFORM 3000-SEND-MAP                                        00710000
+007200     PERFORM 9000-RETURN-CICS.                                    00720000
+007300***********************************************************       00730001
+007400*                    SENDING MAP                          *       00740001
+007500***********************************************************       00750001
+007600 3000-SEND-MAP.                                                   00760000
+007700     EXEC CICS SEND                                               00770000
+007800        MAP('ADDU')                                               00780000
+007900        MAPSET('P23AS02')                                         00790000
+008000        FROM (ADDUO)                                              00800000
+008100        ERASE                                                     00810000
+008200     END-EXEC.                                                    00820000
+008300***********************************************************       00830001
+008400*                  RECEIVING MAP                          *       00840001
+008500***********************************************************       00850001
+008600 4000-RECE-MAP.                                                   00860000
+008700     EXEC CICS RECEIVE                                            00870000
+008800        MAP('ADDU')                                               00880000
+008900        MAPSET('P23AS02')                                         00890000
+009000        INTO(ADDUI)                                               00900000
+009100     END-EXEC.                                                    00910000
+009200***********************************************************       00920001
+009300*        MOVING VALUES TO HOST-VARIABLES                  *       00930001
+009400***********************************************************       00940001
+009500 5000-MOVE-PARA.                                                  00950000
+009600     MOVE CIDI      TO C-ID                                       00960000
+009700     MOVE C-ID      TO UID, CUST-ID                               00970000
+009800     MOVE CPASSI    TO C-PASS                                     00980000
+009900     MOVE C-PASS    TO UPASS                                      00990000
+010000     MOVE 'U'       TO UTYPE                                      01000000
+010100     MOVE 'P'       TO USTAT                                      01010000
+010200     MOVE CNAMEI    TO C-NAME                                     01020000
+010300     MOVE C-NAME    TO UNAME                                      01030000
+010400     MOVE CADDI     TO C-ADD                                      01040000
+010500     MOVE C-ADD     TO UADD                                       01050000
+010600     MOVE CDOBI     TO C-DOB                                      01060000
+010700     MOVE C-DOB     TO UDOB                                       01070000
+010800     MOVE CNUMI     TO WS-NUM                                     01080000
+010900     MOVE WS-NUM-O  TO UNUM                                       01090000
+011000     MOVE CSALARYI  TO WS-SAL                                     01100000
+011100     MOVE WS-SAL-O  TO USAL                                       01110000
+011200     MOVE CLAMTI    TO WS-LAMT                                    01120000
+011300     MOVE WS-LAMT-O TO LAMT                                       01130000
+011400     MOVE '10'      TO ROI                                        01140000
+011500     COMPUTE WS-BAL = 10 * WS-LAMT-O + WS-LAMT-O                  01150000
+011600     MOVE    WS-BAL TO BLNC                                       01160000
+011700     PERFORM 6000-INSERT-PARA.                                    01170000
+011800***********************************************************       01180001
+011900*      INSERTING VALUES INTO THE USER, LOAN TABLE         *       01190001
+012000***********************************************************       01200001
+012100 6000-INSERT-PARA.                                                01210000
+012200     EXEC SQL                                                     01220000
+012300        INSERT INTO T23_USER( UID, UPASS, UTYPE, USTAT,           01230000
+012400                              UNAME, UADD, UDOB,                  01240000
+012500                              UNUM, USAL)                         01250000
+012600               VALUES( :UID, :UPASS, :UTYPE, :USTAT,              01260000
+012700                              :UNAME, :UADD, :UDOB,               01270000
+012800                              :UNUM, :USAL)                       01280000
+012900     END-EXEC                                                     01290000
+013000     EXEC SQL                                                     01300000
+013100        INSERT INTO T23_LOAN(CUST_ID, LAMT, ROI, BLNC)            01310000
+013200                    VALUES( :CUST-ID, :LAMT, :ROI, :BLNC)         01320000
+013300     END-EXEC                                                     01330000
+013400*  CHECKING USING SQLCODES                                        01340001
+013500     IF SQLCODE = ZERO                                            01350000
+013600        MOVE 'YOUR APPLICATION HAS BEEN ACCEPTED' TO MESSAGEO     01360000
+013700     END-IF.                                                      01370000
+013800* GIVING CONTROL BACK TO CICS                                     01380001
+013900 9000-RETURN-CICS.                                                01390000
+014000     EXEC CICS RETURN                                             01400000
+014100        TRANSID('P23B')                                           01410000
+014200        COMMAREA(WS-CA)                                           01420000
+014300     END-EXEC.                                                    01430000
+014400************************END OF THE PROGRAM*******************     01440001
